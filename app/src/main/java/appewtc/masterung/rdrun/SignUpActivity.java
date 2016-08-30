@@ -34,6 +34,15 @@ public class SignUpActivity extends AppCompatActivity {
         avata3RadioButton = (RadioButton) findViewById(R.id.radioButton3);
         avata4RadioButton = (RadioButton) findViewById(R.id.radioButton4);
 
+        //Radio Controller
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+
+            }
+        });
+
+
     }   // Main Method
 
     public void clickSignUpSign(View view) {
