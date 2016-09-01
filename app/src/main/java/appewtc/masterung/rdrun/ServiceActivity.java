@@ -31,6 +31,7 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
     private Criteria criteria;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
