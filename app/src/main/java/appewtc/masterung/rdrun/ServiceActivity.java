@@ -17,6 +17,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 public class ServiceActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -29,7 +38,7 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
     private double userLatADouble = 13.806814, userLngADouble = 100.574725; // Connection
     private LocationManager locationManager;
     private Criteria criteria;
-
+    private static final String urlPHP = "http://swiftcodingthai.com/rd/edit_location_master.php";
 
 
     @Override
@@ -163,6 +172,8 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d("1SepV2", "Lat ==> " + userLatADouble);
         Log.d("1SepV2", "Lng ==> " + userLngADouble);
 
+        editLatLngOnServer();
+
 
         //Post Delay
         Handler handler = new Handler();
@@ -175,5 +186,31 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
 
 
     }   // myLoop
+
+    private void editLatLngOnServer() {
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        RequestBody requestBody = new FormEncodingBuilder()
+                .add("isAdd", "true")
+                .add("id", idString)
+                .add("Lat", Double.toString(userLatADouble))
+                .add("Lng", Double.toString(userLngADouble))
+                .build();
+        Request.Builder builder = new Request.Builder();
+        Request request = builder.url(urlPHP).post(requestBody).build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Log.d("2SepV1", "e ==> " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                Log.d("2SepV1", "Result ==> " + response.body().string());
+            }
+        });
+
+    }   // editLatLng
 
 }   // Main Class
