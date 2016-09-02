@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -80,6 +81,48 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
     }   // Main Method
+
+    private class SynAllUser extends AsyncTask<Void, Void, String> {
+
+        //Explicit
+        private Context context;
+        private GoogleMap googleMap;
+        private static final String urlJSON = "http://swiftcodingthai.com/rd/get_user_master.php";
+
+        public SynAllUser(Context context, GoogleMap googleMap) {
+            this.context = context;
+            this.googleMap = googleMap;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            try {
+
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Request.Builder builder = new Request.Builder();
+                Request request = builder.url(urlJSON).build();
+                Response response = okHttpClient.newCall(request).execute();
+                return response.body().string();
+
+            } catch (Exception e) {
+                Log.d("2SepV2", "e doIn ==> " + e.toString());
+                return null;
+            }
+
+        }   // doInBack
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.d("2SepV2", "JSON ==> " + s);
+
+
+        }   // onPost
+
+    }   // SynAllUser Class
+
 
     @Override
     protected void onResume() {
@@ -174,6 +217,8 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
 
         editLatLngOnServer();
 
+        createMarker();
+
 
         //Post Delay
         Handler handler = new Handler();
@@ -186,6 +231,15 @@ public class ServiceActivity extends FragmentActivity implements OnMapReadyCallb
 
 
     }   // myLoop
+
+    private void createMarker() {
+
+
+        SynAllUser synAllUser = new SynAllUser(this, mMap);
+        synAllUser.execute();
+
+
+    }   // createMarker
 
     private void editLatLngOnServer() {
 
